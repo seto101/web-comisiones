@@ -1,0 +1,410 @@
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Comisiones - Informe Mensual</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="controls">
+        <button class="btn" onclick="window.print()">Imprimir / PDF</button>
+        <button class="btn" onclick="calcularTodo()">Calcular Todo</button>
+        <button class="btn" onclick="guardarLocalStorage()">Guardar</button>
+        <button class="btn" onclick="cargarLocalStorage()">Cargar Guardado</button>
+    </div>
+
+    <div class="header">
+        <h1>SISTEMA DE COMISIONES - INFORME MENSUAL</h1>
+        <h2>Periodo: <input type="text" id="mes_periodo" placeholder="MES" class="editable" style="width: 100px;"> <input type="text" id="anio_periodo" placeholder="AÑO" class="editable" style="width: 100px;"></h2>
+    </div>
+
+    <div class="info-box">
+        <h3>RESUMEN GLOBAL</h3>
+        
+        <table class="summary-table">
+            <tr>
+                <th>Punto de Venta</th>
+                <th>Objetivo del Mes</th>
+                <th>Ventas Reales</th>
+                <th>Cumplimiento</th>
+                <th>Comisión Generada</th>
+            </tr>
+            <tr>
+                <td>Paseo San Francisco</td>
+                <td>$<input type="number" id="objetivo_psf" class="editable" oninput="calcularVentasPorPunto()" placeholder="0.00"></td>
+                <td>$<input type="number" id="ventas_psf" class="editable" oninput="calcularVentasPorPunto()" placeholder="0.00"></td>
+                <td id="cumplimiento_psf">0%</td>
+                <td id="comision_psf">0%</td>
+            </tr>
+            <tr>
+                <td>Riocentro Shopping</td>
+                <td>$<input type="number" id="objetivo_rs" class="editable" oninput="calcularVentasPorPunto()" placeholder="0.00"></td>
+                <td>$<input type="number" id="ventas_rs" class="editable" oninput="calcularVentasPorPunto()" placeholder="0.00"></td>
+                <td id="cumplimiento_rs">0%</td>
+                <td id="comision_rs">0%</td>
+            </tr>
+            <tr>
+                <td>Plaza Garden</td>
+                <td>$<input type="number" id="objetivo_pg" class="editable" oninput="calcularVentasPorPunto()" placeholder="0.00"></td>
+                <td>$<input type="number" id="ventas_pg" class="editable" oninput="calcularVentasPorPunto()" placeholder="0.00"></td>
+                <td id="cumplimiento_pg">0%</td>
+                <td id="comision_pg">0%</td>
+            </tr>
+            <tr>
+                <td>El Bosque</td>
+                <td>$<input type="number" id="objetivo_eb" class="editable" oninput="calcularVentasPorPunto()" placeholder="0.00"></td>
+                <td>$<input type="number" id="ventas_eb" class="editable" oninput="calcularVentasPorPunto()" placeholder="0.00"></td>
+                <td id="cumplimiento_eb">0%</td>
+                <td id="comision_eb">0%</td>
+            </tr>
+            <tr>
+                <td>Riocentro Entre Ríos</td>
+                <td>$<input type="number" id="objetivo_re" class="editable" oninput="calcularVentasPorPunto()" placeholder="0.00"></td>
+                <td>$<input type="number" id="ventas_re" class="editable" oninput="calcularVentasPorPunto()" placeholder="0.00"></td>
+                <td id="cumplimiento_re">0%</td>
+                <td id="comision_re">0%</td>
+            </tr>
+            <tr class="summary-row" style="font-weight: bold; background-color: #e9ecef;">
+                <td>TOTALES</td>
+                <td id="objetivo_total">$0.00</td>
+                <td id="ventas_totales">$0.00</td>
+                <td id="cumplimiento_global">0%</td>
+                <td id="comision_total_generada">$0.00</td>
+            </tr>
+        </table>
+        
+        <div class="progress-bar" style="margin-top: 15px; margin-bottom: 20px;">
+            <div id="barra_cumplimiento_global" class="progress-bar-fill" style="width: 0%">0%</div>
+        </div>
+        
+        <table class="summary-table" style="margin-top: 20px;">
+            <tr>
+                <th>Ventas Totales</th>
+                <th>Costos de Venta</th>
+                <th>Utilidad Bruta</th>
+                <th>% Comisión</th>
+                <th>Fondo Total Comisiones</th>
+            </tr>
+            <tr>
+                <td id="ventas_totales_resumen">$0.00</td>
+                <td>$<input type="number" id="costos_venta" class="editable" oninput="calcularUtilidad()" placeholder="0.00"></td>
+                <td id="utilidad_bruta">$0.00</td>
+                <td id="porcentaje_comision">0%</td>
+                <td id="fondo_comisiones">$0.00</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Supervisor de Ventas -->
+    <div class="employee-section">
+        <div class="section-title">
+            <h3>SUPERVISOR DE VENTAS: <input type="text" id="nombre_supervisor_ventas" class="editable" placeholder="Nombre"></h3>
+        </div>
+        
+        <table>
+            <tr>
+                <th>KPI</th>
+                <th>Meta</th>
+                <th>Resultado</th>
+                <th>Cumplimiento</th>
+                <th>Ponderación</th>
+                <th>Puntos</th>
+            </tr>
+            <tr>
+                <td>Crecimiento en ventas (%)</td>
+                <td><input type="number" id="meta_crec_ventas" class="editable" oninput="calcularKpiVentas()" placeholder="0.00"></td>
+                <td><input type="number" id="resultado_crec_ventas" class="editable" oninput="calcularKpiVentas()" placeholder="0.00"></td>
+                <td id="cumplimiento_crec_ventas">0%</td>
+                <td>30%</td>
+                <td id="puntos_crec_ventas">0</td>
+            </tr>
+            <tr>
+                <td>Cumplimiento de metas del equipo (%)</td>
+                <td><input type="number" id="meta_cumpl_equipo" class="editable" oninput="calcularKpiVentas()" placeholder="0.00"></td>
+                <td><input type="number" id="resultado_cumpl_equipo" class="editable" oninput="calcularKpiVentas()" placeholder="0.00"></td>
+                <td id="cumplimiento_cumpl_equipo">0%</td>
+                <td>20%</td>
+                <td id="puntos_cumpl_equipo">0</td>
+            </tr>
+            <tr>
+                <td>Crecimiento valor ticket promedio ($)</td>
+                <td><input type="number" id="meta_ticket_prom" class="editable" oninput="calcularKpiVentas()" placeholder="0.00"></td>
+                <td><input type="number" id="resultado_ticket_prom" class="editable" oninput="calcularKpiVentas()" placeholder="0.00"></td>
+                <td id="cumplimiento_ticket_prom">0%</td>
+                <td>20%</td>
+                <td id="puntos_ticket_prom">0</td>
+            </tr>
+            <tr>
+                <td>Generación de contenido en redes (N)</td>
+                <td><input type="number" id="meta_contenido" class="editable" oninput="calcularKpiVentas()" placeholder="0"></td>
+                <td><input type="number" id="resultado_contenido" class="editable" oninput="calcularKpiVentas()" placeholder="0"></td>
+                <td id="cumplimiento_contenido">0%</td>
+                <td>30%</td>
+                <td id="puntos_contenido">0</td>
+            </tr>
+            <tr>
+                <th colspan="4">CUMPLIMIENTO TOTAL</th>
+                <th>100%</th>
+                <th id="cumplimiento_total_ventas">0%</th>
+            </tr>
+        </table>
+        
+        <div class="info-box">
+            <h4>COMISIÓN ASIGNADA: <span id="comision_supervisor_ventas">$0.00</span></h4>
+            <div class="progress-bar">
+                <div id="barra_ventas" class="progress-bar-fill" style="width: 0%">0%</div>
+            </div>
+            <p>Observaciones: <input type="text" id="observaciones_ventas" class="editable" style="width: 90%;" placeholder="Agregar observaciones..."></p>
+        </div>
+    </div>
+
+    <!-- Supervisor de Bodega -->
+    <div class="employee-section">
+        <div class="section-title">
+            <h3>SUPERVISOR DE BODEGA: <input type="text" id="nombre_supervisor_bodega" class="editable" placeholder="Nombre"></h3>
+        </div>
+        
+        <table>
+            <tr>
+                <th>KPI</th>
+                <th>Meta</th>
+                <th>Resultado</th>
+                <th>Cumplimiento</th>
+                <th>Ponderación</th>
+                <th>Puntos</th>
+            </tr>
+            <tr>
+                <td>Rotación de inventario (días)</td>
+                <td><input type="number" id="meta_rotacion" class="editable" oninput="calcularKpiBodega()" placeholder="0"></td>
+                <td><input type="number" id="resultado_rotacion" class="editable" oninput="calcularKpiBodega()" placeholder="0"></td>
+                <td id="cumplimiento_rotacion">0%</td>
+                <td>30%</td>
+                <td id="puntos_rotacion">0</td>
+            </tr>
+            <tr>
+                <td>Tiempo de ingreso de mercadería (h/días)</td>
+                <td><input type="number" id="meta_tiempo_ingreso" class="editable" oninput="calcularKpiBodega()" placeholder="0"></td>
+                <td><input type="number" id="resultado_tiempo_ingreso" class="editable" oninput="calcularKpiBodega()" placeholder="0"></td>
+                <td id="cumplimiento_tiempo_ingreso">0%</td>
+                <td>20%</td>
+                <td id="puntos_tiempo_ingreso">0</td>
+            </tr>
+            <tr>
+                <td>Optimización de compras (%)</td>
+                <td><input type="number" id="meta_optimizacion" class="editable" oninput="calcularKpiBodega()" placeholder="0.00"></td>
+                <td><input type="number" id="resultado_optimizacion" class="editable" oninput="calcularKpiBodega()" placeholder="0.00"></td>
+                <td id="cumplimiento_optimizacion">0%</td>
+                <td>20%</td>
+                <td id="puntos_optimizacion">0</td>
+            </tr>
+            <tr>
+                <td>Nivel de stock óptimo (%)</td>
+                <td><input type="number" id="meta_stock_optimo" class="editable" oninput="calcularKpiBodega()" placeholder="0.00"></td>
+                <td><input type="number" id="resultado_stock_optimo" class="editable" oninput="calcularKpiBodega()" placeholder="0.00"></td>
+                <td id="cumplimiento_stock_optimo">0%</td>
+                <td>30%</td>
+                <td id="puntos_stock_optimo">0</td>
+            </tr>
+            <tr>
+                <th colspan="4">CUMPLIMIENTO TOTAL</th>
+                <th>100%</th>
+                <th id="cumplimiento_total_bodega">0%</th>
+            </tr>
+        </table>
+        
+        <div class="info-box">
+            <h4>COMISIÓN ASIGNADA: <span id="comision_supervisor_bodega">$0.00</span></h4>
+            <div class="progress-bar">
+                <div id="barra_bodega" class="progress-bar-fill" style="width: 0%">0%</div>
+            </div>
+            <p>Observaciones: <input type="text" id="observaciones_bodega" class="editable" style="width: 90%;" placeholder="Agregar observaciones..."></p>
+        </div>
+    </div>
+
+    <!-- Auxiliar Contable -->
+    <div class="employee-section">
+        <div class="section-title">
+            <h3>AUXILIAR CONTABLE: <input type="text" id="nombre_auxiliar_contable" class="editable" placeholder="Nombre"></h3>
+        </div>
+        
+        <table>
+            <tr>
+                <th>KPI</th>
+                <th>Meta</th>
+                <th>Resultado</th>
+                <th>Cumplimiento</th>
+                <th>Ponderación</th>
+                <th>Puntos</th>
+            </tr>
+            <tr>
+                <td>Precisión en registros contables (%)</td>
+                <td><input type="number" id="meta_precision" class="editable" oninput="calcularKpiContable()" placeholder="0.00"></td>
+                <td><input type="number" id="resultado_precision" class="editable" oninput="calcularKpiContable()" placeholder="0.00"></td>
+                <td id="cumplimiento_precision">0%</td>
+                <td>30%</td>
+                <td id="puntos_precision">0</td>
+            </tr>
+            <tr>
+                <td>Tiempo de procesamiento de pagos (días)</td>
+                <td><input type="number" id="meta_proc_pagos" class="editable" oninput="calcularKpiContable()" placeholder="0"></td>
+                <td><input type="number" id="resultado_proc_pagos" class="editable" oninput="calcularKpiContable()" placeholder="0"></td>
+                <td id="cumplimiento_proc_pagos">0%</td>
+                <td>10%</td>
+                <td id="puntos_proc_pagos">0</td>
+            </tr>
+            <tr>
+                <td>Gestión de anticipos y caja chica (%)</td>
+                <td><input type="number" id="meta_caja_chica" class="editable" oninput="calcularKpiContable()" placeholder="0.00"></td>
+                <td><input type="number" id="resultado_caja_chica" class="editable" oninput="calcularKpiContable()" placeholder="0.00"></td>
+                <td id="cumplimiento_caja_chica">0%</td>
+                <td>20%</td>
+                <td id="puntos_caja_chica">0</td>
+            </tr>
+            <tr>
+                <td>Detección de errores en punto de venta</td>
+                <td><input type="number" id="meta_deteccion" class="editable" oninput="calcularKpiContable()" placeholder="0"></td>
+                <td><input type="number" id="resultado_deteccion" class="editable" oninput="calcularKpiContable()" placeholder="0"></td>
+                <td id="cumplimiento_deteccion">0%</td>
+                <td>30%</td>
+                <td id="puntos_deteccion">0</td>
+            </tr>
+            <tr>
+                <td>Informe de gastos mensual</td>
+                <td><input type="number" id="meta_informe" class="editable" oninput="calcularKpiContable()" placeholder="0"></td>
+                <td><input type="number" id="resultado_informe" class="editable" oninput="calcularKpiContable()" placeholder="0"></td>
+                <td id="cumplimiento_informe">0%</td>
+                <td>10%</td>
+                <td id="puntos_informe">0</td>
+            </tr>
+            <tr>
+                <th colspan="4">CUMPLIMIENTO TOTAL</th>
+                <th>100%</th>
+                <th id="cumplimiento_total_contable">0%</th>
+            </tr>
+        </table>
+        
+        <div class="info-box">
+            <h4>COMISIÓN ASIGNADA: <span id="comision_auxiliar_contable">$0.00</span></h4>
+            <div class="progress-bar">
+                <div id="barra_contable" class="progress-bar-fill" style="width: 0%">0%</div>
+            </div>
+            <p>Observaciones: <input type="text" id="observaciones_contable" class="editable" style="width: 90%;" placeholder="Agregar observaciones..."></p>
+        </div>
+    </div>
+
+    <!-- Asistente de Marketing -->
+    <div class="employee-section">
+        <div class="section-title">
+            <h3>ASISTENTE DE MARKETING Y DISEÑO: <input type="text" id="nombre_asistente_marketing" class="editable" placeholder="Nombre"></h3>
+        </div>
+        
+        <table>
+            <tr>
+                <th>KPI</th>
+                <th>Meta</th>
+                <th>Resultado</th>
+                <th>Cumplimiento</th>
+                <th>Ponderación</th>
+                <th>Puntos</th>
+            </tr>
+            <tr>
+                <td>Cantidad de piezas de contenido (#)</td>
+                <td><input type="number" id="meta_cantidad_piezas" class="editable" oninput="calcularKpiMarketing()" placeholder="0"></td>
+                <td><input type="number" id="resultado_cantidad_piezas" class="editable" oninput="calcularKpiMarketing()" placeholder="0"></td>
+                <td id="cumplimiento_cantidad_piezas">0%</td>
+                <td>20%</td>
+                <td id="puntos_cantidad_piezas">0</td>
+            </tr>
+            <tr>
+                <td>Desarrollo de calendario de contenidos</td>
+                <td><input type="number" id="meta_calendario" class="editable" oninput="calcularKpiMarketing()" placeholder="0.00"></td>
+                <td><input type="number" id="resultado_calendario" class="editable" oninput="calcularKpiMarketing()" placeholder="0.00"></td>
+                <td id="cumplimiento_calendario">0%</td>
+                <td>30%</td>
+                <td id="puntos_calendario">0</td>
+            </tr>
+            <tr>
+                <td>Crecimiento en redes, engagement (%)</td>
+                <td><input type="number" id="meta_engagement" class="editable" oninput="calcularKpiMarketing()" placeholder="0.00"></td>
+                <td><input type="number" id="resultado_engagement" class="editable" oninput="calcularKpiMarketing()" placeholder="0.00"></td>
+                <td id="cumplimiento_engagement">0%</td>
+                <td>20%</td>
+                <td id="puntos_engagement">0</td>
+            </tr>
+            <tr>
+                <td>Creatividad e innovación (subjetivo)</td>
+                <td><input type="number" id="meta_creatividad" class="editable" oninput="calcularKpiMarketing()" placeholder="0.00"></td>
+                <td><input type="number" id="resultado_creatividad" class="editable" oninput="calcularKpiMarketing()" placeholder="0.00"></td>
+                <td id="cumplimiento_creatividad">0%</td>
+                <td>30%</td>
+                <td id="puntos_creatividad">0</td>
+            </tr>
+            <tr>
+                <th colspan="4">CUMPLIMIENTO TOTAL</th>
+                <th>100%</th>
+                <th id="cumplimiento_total_marketing">0%</th>
+            </tr>
+        </table>
+        
+        <div class="info-box">
+            <h4>COMISIÓN ASIGNADA: <span id="comision_asistente_marketing">$0.00</span></h4>
+            <div class="progress-bar">
+                <div id="barra_marketing" class="progress-bar-fill" style="width: 0%">0%</div>
+            </div>
+            <p>Observaciones: <input type="text" id="observaciones_marketing" class="editable" style="width: 90%;" placeholder="Agregar observaciones..."></p>
+        </div>
+    </div>
+
+    <!-- Resumen Final -->
+    <div class="info-box no-print-break">
+        <h3>RESUMEN FINAL DE COMISIONES</h3>
+        <table class="summary-table">
+            <tr>
+                <th>Empleado</th>
+                <th>Cumplimiento</th>
+                <th>Comisión Asignada</th>
+            </tr>
+            <tr>
+                <td>Supervisor de Ventas</td>
+                <td id="cumplimiento_total_ventas_resumen">0%</td>
+                <td id="comision_total_ventas">$0.00</td>
+            </tr>
+            <tr>
+                <td>Supervisor de Bodega</td>
+                <td id="cumplimiento_total_bodega_resumen">0%</td>
+                <td id="comision_total_bodega">$0.00</td>
+            </tr>
+            <tr>
+                <td>Auxiliar Contable</td>
+                <td id="cumplimiento_total_contable_resumen">0%</td>
+                <td id="comision_total_contable">$0.00</td>
+            </tr>
+            <tr>
+                <td>Asistente de Marketing</td>
+                <td id="cumplimiento_total_marketing_resumen">0%</td>
+                <td id="comision_total_marketing">$0.00</td>
+            </tr>
+            <tr>
+                <th>TOTAL</th>
+                <th>-</th>
+                <th id="total_comisiones">$0.00</th>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Sección de Firmas -->
+    <div class="signature-section no-print-break">
+        <div class="signature-box">
+            <p>Gerente General</p>
+        </div>
+        <div class="signature-box">
+            <p>Recursos Humanos</p>
+        </div>
+        <div class="signature-box">
+            <p>Contabilidad</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
